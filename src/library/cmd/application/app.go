@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"library/cmd/configuration"
+	"library/internal/handlers"
+	"library/internal/repository"
+	"library/internal/service"
 	"os"
 	"os/signal"
 	"syscall"
@@ -27,8 +30,16 @@ func New(cfg *configuration.Config, logger *zap.SugaredLogger, pool *pgxpool.Poo
 	}
 }
 
+func (a *App) libraryHandler() *handlers.Handler {
+	libraryRepository := repository.NewLibraryRepository(a.Pool)
+	libraryService := service.NewLibraryService(libraryRepository)
+	libraryHandler := handlers.NewHandler(libraryService)
+	return libraryHandler
+}
+
 func (a *App) Run() error {
-	server, err := a.newHTTPServer()
+	libraryHandler := a.libraryHandler()
+	server, err := a.newHTTPServer(libraryHandler)
 	if err != nil {
 		return fmt.Errorf("new httpServer: %w", err)
 	}

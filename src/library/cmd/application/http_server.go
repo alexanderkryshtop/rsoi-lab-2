@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"library/internal/handlers"
 	"net/http"
 	"time"
 
@@ -18,9 +19,10 @@ type httpServer struct {
 	shutdownTimeout time.Duration
 }
 
-func (a *App) newHTTPServer() (*httpServer, error) {
+func (a *App) newHTTPServer(handler *handlers.Handler) (*httpServer, error) {
 	mux := chi.NewMux()
 	mux.Mount("/", adminHandler())
+	mux.Mount("/", handler.Routes())
 	return &httpServer{
 		logger: a.Logger,
 		server: &http.Server{
