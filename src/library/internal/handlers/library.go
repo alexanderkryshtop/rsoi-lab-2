@@ -48,6 +48,7 @@ func (handler *Handler) GetLibraries() func(w http.ResponseWriter, r *http.Reque
 			http.Error(w, fmt.Sprintf("cannot marshal response: %+v", err), http.StatusInternalServerError)
 		}
 
+		w.Header().Add("Content-Type", "application/json")
 		_, _ = w.Write(jsonResponse)
 	}
 }
