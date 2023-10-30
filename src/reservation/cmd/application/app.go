@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"fmt"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"os"
 	"os/signal"
 	"reservation/cmd/configuration"
@@ -15,12 +16,14 @@ import (
 type App struct {
 	Config *configuration.Config
 	Logger *zap.SugaredLogger
+	Pool   *pgxpool.Pool
 }
 
-func New(cfg *configuration.Config, logger *zap.SugaredLogger) *App {
+func New(cfg *configuration.Config, logger *zap.SugaredLogger, pool *pgxpool.Pool) *App {
 	return &App{
 		Config: cfg,
 		Logger: logger,
+		Pool:   pool,
 	}
 }
 
