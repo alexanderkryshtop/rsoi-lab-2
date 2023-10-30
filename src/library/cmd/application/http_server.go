@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/go-chi/chi/v5/middleware"
 	"library/internal/handlers"
 	"net/http"
 	"time"
@@ -21,7 +22,8 @@ type httpServer struct {
 
 func (a *App) newHTTPServer(handler *handlers.Handler) (*httpServer, error) {
 	mux := chi.NewMux()
-	mux.Mount("/", adminHandler())
+	mux.Use(middleware.Logger)
+	mux.Mount("/admin", adminHandler())
 	mux.Mount("/", handler.Routes())
 	return &httpServer{
 		logger: a.Logger,

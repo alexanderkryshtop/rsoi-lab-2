@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-chi/chi/v5"
 	"io"
 	"library/internal/model"
 	"net/http"
@@ -16,13 +15,13 @@ func (handler *Handler) GetLibraries() func(w http.ResponseWriter, r *http.Reque
 			_ = Body.Close()
 		}(r.Body)
 
-		city := chi.URLParam(r, "city")
-		page, err := strconv.ParseInt(chi.URLParam(r, "page"), 10, 32)
+		city := r.URL.Query().Get("city")
+		page, err := strconv.ParseInt(r.URL.Query().Get("page"), 10, 32)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("cannot parse: %+v", err), http.StatusBadRequest)
 		}
 
-		size, err := strconv.ParseInt(chi.URLParam(r, "size"), 10, 32)
+		size, err := strconv.ParseInt(r.URL.Query().Get("size"), 10, 32)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("cannot parse: %+v", err), http.StatusBadRequest)
 		}

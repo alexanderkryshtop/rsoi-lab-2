@@ -18,6 +18,6 @@ func NewHandler(service service.Service) *Handler {
 
 func (handler *Handler) Routes() http.Handler {
 	mux := chi.NewMux()
-	mux.Get("/api/v1/persons", handler.GetLibraries())
+	mux.Get("/api/v1/libraries", handler.GetLibraries())
 	return mux
 }

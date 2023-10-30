@@ -25,9 +25,12 @@ func (repository *LibraryRepository) GetAll(city string) ([]*model.Library, erro
 
 	query := `
 	SELECT
-		*
+		library_uid,
+		name,
+		city,
+		address
 	FROM
-	    libraries
+	    library
 	WHERE
 	    city = $1
 	`
