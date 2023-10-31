@@ -11,4 +11,4 @@ application:
   shutdownTimeout: 10s
 
 server:
-  port: 8060
+  port: 8050

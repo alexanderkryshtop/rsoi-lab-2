@@ -8,12 +8,9 @@ import (
 )
 
 type Config struct {
-	Logger             LoggerConfig      `mapstructure:"logger"`
-	Application        ApplicationConfig `mapstructure:"application"`
-	HTTPServer         HTTPServerConfig  `mapstructure:"server"`
-	LibraryService     EndpointConfig    `mapstructure:"library"`
-	ReservationService EndpointConfig    `mapstructure:"reservation"`
-	RatingService      EndpointConfig    `mapstructure:"rating"`
+	Logger      LoggerConfig      `mapstructure:"logger"`
+	Application ApplicationConfig `mapstructure:"application"`
+	HTTPServer  HTTPServerConfig  `mapstructure:"server"`
 }
 
 type LoggerConfig struct {
@@ -30,11 +27,6 @@ type ApplicationConfig struct {
 
 type HTTPServerConfig struct {
 	Port uint64 `mapstructure:"port"`
-}
-
-type EndpointConfig struct {
-	Address string `mapstructure:"address"`
-	Port    uint64 `mapstructure:"port"`
 }
 
 func newDefaultConfig() *Config {
