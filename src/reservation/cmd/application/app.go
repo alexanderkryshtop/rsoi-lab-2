@@ -32,7 +32,7 @@ func New(cfg *configuration.Config, logger *zap.SugaredLogger, pool *pgxpool.Poo
 
 func (a *App) reservationHandler() *handlers.Handler {
 	reservationRepository := repository.NewReservationRepository(a.Pool)
-	reservationService := service.NewReservationService(reservationRepository)
+	reservationService := service.NewReservationService(reservationRepository, a.Config.GatewayService)
 	reservationHandler := handlers.NewHandler(reservationService)
 	return reservationHandler
 }
