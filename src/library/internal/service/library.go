@@ -7,6 +7,7 @@ import (
 
 type Service interface {
 	GetLibraries(page int, size int, city string) ([]*model.Library, error)
+	GetBooksInLibrary(libraryUID string) ([]*model.Book, error)
 }
 
 type LibraryService struct {
@@ -21,4 +22,8 @@ func NewLibraryService(repository repository.Repository) *LibraryService {
 
 func (service *LibraryService) GetLibraries(page int, size int, city string) ([]*model.Library, error) {
 	return service.repository.GetAll(city)
+}
+
+func (service *LibraryService) GetBooksInLibrary(libraryUID string) ([]*model.Book, error) {
+	return service.repository.GetBooks(libraryUID)
 }

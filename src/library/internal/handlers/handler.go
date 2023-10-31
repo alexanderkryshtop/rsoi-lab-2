@@ -19,5 +19,6 @@ func NewHandler(service service.Service) *Handler {
 func (handler *Handler) Routes() http.Handler {
 	mux := chi.NewMux()
 	mux.Get("/api/v1/libraries", handler.GetLibraries())
+	mux.Get("/api/v1/{libraryUid}/books", handler.GetBooksInLibrary())
 	return mux
 }

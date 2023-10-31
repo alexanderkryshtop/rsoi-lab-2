@@ -8,6 +8,7 @@ import (
 
 type Repository interface {
 	GetAll(city string) ([]*model.Library, error)
+	GetBooks(libraryUID string) ([]*model.Book, error)
 }
 
 type LibraryRepository struct {
@@ -63,4 +64,53 @@ func (repository *LibraryRepository) GetAll(city string) ([]*model.Library, erro
 	}
 
 	return libraries, nil
+}
+
+func (repository *LibraryRepository) GetBooks(libraryUID string) ([]*model.Book, error) {
+	var books []*model.Book
+
+	query := `
+	SELECT
+		book_uid,
+		name,
+		author,
+		genre,
+		condition,
+		available_count
+	FROM
+	    books INNER JOIN library_books ON books.id = library_books.book_id
+	WHERE
+	    library_books.library_id = $1
+	`
+	rows, err := repository.dbPool.Query(
+		context.Background(),
+		query,
+		libraryUID,
+	)
+	defer rows.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		book := new(model.Book)
+		if err := rows.Scan(
+			&book.BookUID,
+			&book.Name,
+			&book.Author,
+			&book.Genre,
+			&book.Condition,
+			&book.AvailableCount,
+		); err != nil {
+			return nil, err
+		}
+		books = append(books, book)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return books, nil
 }
