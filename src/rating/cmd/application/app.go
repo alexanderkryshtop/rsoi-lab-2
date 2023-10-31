@@ -30,7 +30,7 @@ func New(cfg *configuration.Config, logger *zap.SugaredLogger, pool *pgxpool.Poo
 	}
 }
 
-func (a *App) libraryHandler() *handlers.Handler {
+func (a *App) ratingHandler() *handlers.Handler {
 	ratingRepository := repository.NewRatingRepository(a.Pool)
 	ratingService := service.NewRatingService(ratingRepository)
 	ratingHandler := handlers.NewHandler(ratingService)
@@ -38,7 +38,7 @@ func (a *App) libraryHandler() *handlers.Handler {
 }
 
 func (a *App) Run() error {
-	libraryHandler := a.libraryHandler()
+	libraryHandler := a.ratingHandler()
 	server, err := a.newHTTPServer(libraryHandler)
 	if err != nil {
 		return fmt.Errorf("new httpServer: %w", err)

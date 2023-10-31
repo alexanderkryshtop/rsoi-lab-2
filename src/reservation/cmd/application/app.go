@@ -7,6 +7,9 @@ import (
 	"os"
 	"os/signal"
 	"reservation/cmd/configuration"
+	"reservation/internal/handlers"
+	"reservation/internal/repository"
+	"reservation/internal/service"
 	"syscall"
 
 	"go.uber.org/zap"
@@ -27,8 +30,15 @@ func New(cfg *configuration.Config, logger *zap.SugaredLogger, pool *pgxpool.Poo
 	}
 }
 
+func (a *App) reservationHandler() *handlers.Handler {
+	reservationRepository := repository.NewReservationRepository(a.Pool)
+	reservationService := service.NewReservationService(reservationRepository)
+	reservationHandler := handlers.NewHandler(reservationService)
+	return reservationHandler
+}
+
 func (a *App) Run() error {
-	server, err := a.newHTTPServer()
+	server, err := a.newHTTPServer(a.reservationHandler())
 	if err != nil {
 		return fmt.Errorf("new httpServer: %w", err)
 	}

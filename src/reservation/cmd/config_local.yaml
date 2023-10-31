@@ -12,3 +12,7 @@ application:
 
 server:
   port: 8070
+
+gateway:
+  address: localhost
+  port: 8080
