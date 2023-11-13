@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum
 
 class BookCondition(Enum):
@@ -5,6 +6,7 @@ class BookCondition(Enum):
     GOOD = 'GOOD',
     BAD = 'BAD',
 
+@dataclass
 class Book:
     id: int
     book_uid: str
