@@ -12,6 +12,6 @@ def get_libraries_with_pagination():
     size = request.args.get("size")
     city = request.args.get("city")
 
-    library_service.get_libraries(city, page, size)
+    libs = library_service.get_libraries(city, page, size)
 
-    return f'{page}, {size}, {city}', 200
+    return f'{libs}', 200

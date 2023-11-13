@@ -5,6 +5,6 @@ from repository import LibraryModel
 class LibraryService:
     
     def get_libraries(self, city: str, page: Optional[int] = None, size: Optional[int] = None) -> list[Library]:
-        a = LibraryModel.query.all()
-        print(a)
-        pass
+        libraryModels: list[LibraryModel] = LibraryModel.query.filter(LibraryModel.city == city).all()
+        libraries = [model.to_entity() for model in libraryModels]
+        return libraries
