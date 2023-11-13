@@ -7,11 +7,16 @@ reservation_app = Blueprint("reservation", __name__, url_prefix="/reservations")
 
 reservation_service = ReservationService()
 
-@reservation_app.route("/")
+@reservation_app.route("/", methods=["POST"])
 def take_book_in_library():
     username = request.headers.get("X-User-Name")
+    json_body = request.get_json()
 
-    libs = reservation_service.take_book_in_library(username)
+    bookUid = json_body["bookUid"]
+    libraryUid = json_body["libraryUid"]
+    tillDate = json_body["tillDate"]
+
+    libs = reservation_service.take_book_in_library(username, bookUid, libraryUid, tillDate)
 
     return f"{libs}", 200
 

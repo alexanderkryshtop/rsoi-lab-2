@@ -1,5 +1,7 @@
+from typing_extensions import Self
+from typing import Optional
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, Enum
 
 db = SQLAlchemy()
 
@@ -28,6 +30,21 @@ class ReservationModel(db.Model):
             status=self.status,
             start_date=self.start_date,
             till_date=self.till_date,
+        )
+
+    @classmethod
+    def from_entity(cls, reservation: Reservation) -> Optional[Self]:
+        if not reservation:
+            return None
+        return ReservationModel(
+            id=reservation.id,
+            reservation_uid=reservation.reservation_uid,
+            username=reservation.username,
+            book_uid=reservation.book_uid,
+            library_uid=reservation.library_uid,
+            status=reservation.status,
+            start_date=reservation.start_date,
+            till_date=reservation.till_date,
         )
 
     def __repr__(self) -> str:

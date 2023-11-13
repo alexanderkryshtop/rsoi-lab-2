@@ -1,2 +1,6 @@
 server:
   port: 8070
+
+gateway:
+  hostname: localhost
+  port: 8080

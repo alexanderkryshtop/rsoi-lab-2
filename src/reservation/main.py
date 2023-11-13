@@ -17,6 +17,12 @@ app.register_blueprint(reservation_app)
 def config_load():
     config_yaml = yaml.safe_load(open("config.yaml"))
     app.config["port"] = config_yaml["server"]["port"]
+    
+    gateway_port = config_yaml["gateway"]["port"]
+    gateway_hostname = config_yaml["gateway"]["hostname"]
+    gateway_url = f"http://{gateway_hostname}:{gateway_port}"
+
+    app.config["gateway"] = gateway_url
 
 if __name__ == '__main__':
     config_load()
