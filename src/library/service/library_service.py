@@ -32,3 +32,20 @@ class LibraryService:
 
         books = [model.to_entity() for model in bookModels]
         return books
+    
+    def change_book_availability(self, library_uid: str, book_uid: str, delta: int) -> Optional[int]:
+        libraryModel: LibraryModel = LibraryModel.query.filter(LibraryModel.library_uid == library_uid).one_or_none()
+        bookModel: BookModel = BookModel.query.filter(BookModel.book_uid == book_uid).one_or_none()
+        if not libraryModel or not bookModel:
+            return None
+
+        libraryBooksModel: LibraryBooksModel = LibraryBooksModel.query.filter(
+            LibraryBooksModel.library_id == libraryModel.id, LibraryBooksModel.book_id == bookModel.id
+        ).one_or_none()
+        if not libraryBooksModel:
+            return None
+        
+        libraryBooksModel.query.update({LibraryBooksModel.available_count: LibraryBooksModel.available_count + delta})
+        libraryBooksModel.query.session.commit()
+
+        return libraryBooksModel.available_count

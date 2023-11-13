@@ -26,3 +26,12 @@ def get_books_in_library(library_uid: str):
     books = library_service.get_books_in_library(library_uid=library_uid)
 
     return f"{books}", 200
+
+@library_app.route("/change_availability", methods=["POST"])
+def change_available_count_by_delta():
+    json_request = request.get_json()
+    library_uid = json_request["library_uid"]
+    book_uid = json_request["book_uid"]
+    delta = json_request["delta"]
+    book_availability = library_service.change_book_availability(library_uid, book_uid, delta)
+    return {"availability": book_availability}, 200
