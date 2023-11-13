@@ -11,7 +11,7 @@ reservation_service = ReservationService()
 def take_book_in_library():
     username = request.headers.get("X-User-Name")
 
-    libs = reservation_service.get_libraries(city, page, size)
+    libs = reservation_service.take_book_in_library(username)
 
     return f"{libs}", 200
 

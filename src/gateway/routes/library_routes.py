@@ -9,7 +9,7 @@ library_app = Blueprint("library", __name__, url_prefix="/api/v1/libraries")
 library_service = LibraryService()
 
 @library_app.route("/")
-def get_libraries_with_pagination():
+def get_libraries():
     page = request.args.get("page")
     size = request.args.get("size")
     city = request.args.get("city")
@@ -18,6 +18,7 @@ def get_libraries_with_pagination():
 
     decoded_query_string = request.query_string.decode()
     prefix = current_app.config['library']
+
     url = f"{prefix}/libraries?{decoded_query_string}"
     result = requests.get(url)
 
@@ -29,6 +30,10 @@ def get_books_in_library(library_uid: str):
     size = request.args.get("size")
     show_all = request.args.get("showAll")
 
-    books = library_service.get_books_in_library(library_uid=library_uid)
+    decoded_query_string = request.query_string.decode()
+    prefix = current_app.config['library']
 
-    return f"{books}", 200
+    url = f"{prefix}/libraries/{library_uid}/books?{decoded_query_string}"
+    result = requests.get(url)
+
+    return result.text, result.status_code
