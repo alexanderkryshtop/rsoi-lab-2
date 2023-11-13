@@ -1,2 +1,13 @@
 server:
-  port: 8060
+  port: 8080
+
+services:
+  - library:
+      hostname: localhost
+      port: 8060
+  - rating:
+      hostname: localhost
+      port: 8050
+  - reservation:
+      hostname: localhost
+      port: 8070
