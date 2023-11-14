@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql+psycopg2://postgres:postgres@localhost:5432/libraries'
+app.json.ensure_ascii = False
 
 from repository.models import db
 db.init_app(app)
