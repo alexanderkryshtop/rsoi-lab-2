@@ -19,7 +19,7 @@ class LibraryModel(db.Model):
     def to_entity(self) -> Library:
         return Library(
             id=self.id,
-            library_uid=self.library_uid,
+            library_uid=str(self.library_uid),
             name=self.name,
             city=self.city,
             address=self.address,
@@ -42,7 +42,7 @@ class BookModel(db.Model):
     def to_entity(self) -> Book:
         return Book(
             id=self.id,
-            book_uid=self.book_uid,
+            book_uid=str(self.book_uid),
             name=self.name,
             author=self.author,
             genre=self.genre,

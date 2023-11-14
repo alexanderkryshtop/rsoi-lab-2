@@ -11,6 +11,12 @@ class LibraryService:
         libraryModels: list[LibraryModel] = LibraryModel.query.filter(LibraryModel.city == city).all()
         libraries = [model.to_entity() for model in libraryModels]
         return libraries
+    
+    def get_library(self, library_uid: str) -> Optional[Library]:
+        library_model: LibraryModel = LibraryModel.query.filter(LibraryModel.library_uid == library_uid).one_or_none()
+        if not library_model:
+            return None
+        return library_model.to_entity()
 
     def get_books_in_library(
         self,
@@ -32,6 +38,12 @@ class LibraryService:
 
         books = [model.to_entity() for model in bookModels]
         return books
+    
+    def get_book(self, book_uid: str) -> Optional[Book]:
+        book_model: BookModel = BookModel.query.filter(BookModel.book_uid == book_uid).one_or_none()
+        if not book_model:
+            return None
+        return book_model.to_entity()
     
     def change_book_availability(self, library_uid: str, book_uid: str, delta: int) -> Optional[int]:
         libraryModel: LibraryModel = LibraryModel.query.filter(LibraryModel.library_uid == library_uid).one_or_none()
