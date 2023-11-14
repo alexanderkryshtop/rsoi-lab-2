@@ -23,7 +23,7 @@ def get_libraries():
     url = f"{prefix}/libraries?{decoded_query_string}"
     result = requests.get(url)
 
-    return result.text, result.status_code
+    return result.text, result.status_code, {"Content-Type": "application/json"}
 
 @library_app.route("/<library_uid>/books")
 def get_books_in_library(library_uid: str):
@@ -37,7 +37,7 @@ def get_books_in_library(library_uid: str):
     url = f"{prefix}/libraries/{library_uid}/books?{decoded_query_string}"
     result = requests.get(url)
 
-    return result.text, result.status_code
+    return result.text, result.status_code, {"Content-Type": "application/json"}
 
 @library_app.route("/change_availability", methods=["POST"])
 def change_available_count_by_delta():
@@ -48,7 +48,7 @@ def change_available_count_by_delta():
     url = f"{prefix}/libraries/change_availability"
     result = requests.post(url, json=json_request)
 
-    return result.text, result.status_code
+    return result.text, result.status_code, {"Content-Type": "application/json"}
 
 @library_app.route("/book/<book_uid>")
 def get_book(book_uid: str):

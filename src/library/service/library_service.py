@@ -24,7 +24,7 @@ class LibraryService:
         page: Optional[int] = None,
         size: Optional[int] = None,
         show_all: bool = False
-    ) -> list[Book]:
+    ) -> dict[Book, int]:
         libraryModel: LibraryModel = LibraryModel.query.filter(
             LibraryModel.library_uid == library_uid
         ).one_or_none()
@@ -32,11 +32,16 @@ class LibraryService:
         if not libraryModel:
             return []
 
-        bookModels: list[BookModel] = BookModel.query.join(LibraryBooksModel).filter(
+        query_result = BookModel.query.join(LibraryBooksModel).filter(
             LibraryBooksModel.library_id == libraryModel.id
-        ).all()
+        ).with_entities(BookModel, LibraryBooksModel.available_count.label("available_count")).all()
 
-        books = [model.to_entity() for model in bookModels]
+        books = {}
+        for result in query_result:
+            book_model: BookModel = result.BookModel
+            available_count = result.available_count
+            books[book_model.to_entity()] = available_count
+            
         return books
     
     def get_book(self, book_uid: str) -> Optional[Book]:
