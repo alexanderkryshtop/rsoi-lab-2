@@ -100,7 +100,7 @@ class ReservationService:
         json_body = json.dumps({
             "bookUid": book_uid,
             "libraryUid": library_uid,
-            "delta": 1
+            "delta": -1
         })
 
         result = requests.post(url, json=json_body)
