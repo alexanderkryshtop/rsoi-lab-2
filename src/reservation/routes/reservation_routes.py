@@ -33,3 +33,9 @@ def return_book_to_library(reservation_uid: str):
         return {"message": "not found"}, 404, {"Content-Type": "application/json"}
 
     return "", 204, {"Content-Type": "application/json"}
+
+@reservation_app.route("/", methods=["GET"])
+def get_all_reservations():
+    username = request.headers.get("X-User-Name")
+    reservations = reservation_service.get_all_reservations(username)
+    return reservations, 200, {"Content-Type": "application/json"}

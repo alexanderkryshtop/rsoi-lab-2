@@ -66,6 +66,25 @@ class ReservationService:
         new_rating = self._update_user_rating(reservation_model, condition)
         ReservationModel.query.session.commit()
         return True
+    
+    def get_all_reservations(self, username: str) -> list[dict]:
+        result = []
+        all_reservations: list[ReservationModel] = ReservationModel.query.filter(ReservationModel.username == username).all()
+        for reservation in all_reservations:
+            book_uid = reservation.book_uid
+            library_uid = reservation.library_uid
+            book = self._get_book(book_uid)
+            library = self._get_library(library_uid)
+            result.append({
+                "reservationUid": reservation.reservation_uid,
+                "status": reservation.status,
+                "startDate": reservation.start_date.strftime("%Y-%m-%d"),
+                "tillDate": reservation.till_date.strftime("%Y-%m-%d"),
+                "book": book,
+                "library": library,
+            })
+        return result
+
 
     def _get_user_rating(self, username: str) -> dict:
         gateway_url_prefix = current_app.config["gateway"]
