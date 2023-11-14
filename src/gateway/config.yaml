@@ -3,11 +3,11 @@ server:
 
 services:
   - library:
-      hostname: localhost
+      hostname: library_service
       port: 8060
   - rating:
-      hostname: localhost
+      hostname: rating_service
       port: 8050
   - reservation:
-      hostname: localhost
+      hostname: reservation_service
       port: 8070
