@@ -61,6 +61,7 @@ class ReservationService:
             reservation_model.status = "RETURNED"
         
         new_rating = self._update_user_rating(reservation_model, condition)
+        ReservationModel.query.session.commit()
         return True
 
     def _get_user_rating(self, username: str) -> dict:
