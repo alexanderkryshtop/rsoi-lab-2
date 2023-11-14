@@ -50,6 +50,18 @@ class ReservationService:
             "library": library,
             "rating": user_rating,
         }
+    
+    def return_book_to_library(self, reservation_uid: str, condition: str, date: str) -> bool:
+        reservation_model: ReservationModel = ReservationModel.query.filter(ReservationModel.reservation_uid == reservation_uid).one_or_none()
+        if not reservation_model:
+            return False
+        if datetime.strptime(date, "%Y-%m-%d") > reservation_model.till_date:
+            reservation_model.status = "EXPIRED"
+        else:
+            reservation_model.status = "RETURNED"
+        
+        new_rating = self._update_user_rating(reservation_model, condition)
+        return True
 
     def _get_user_rating(self, username: str) -> dict:
         gateway_url_prefix = current_app.config["gateway"]
@@ -97,3 +109,22 @@ class ReservationService:
 
         json_result = result.json()
         return json_result
+    
+    def _change_user_rating(self, username: str, delta: int) -> Optional[dict]:
+        gateway_url_prefix = current_app.config["gateway"]
+        url = f"{gateway_url_prefix}/api/v1/rating/change"
+
+        result = requests.post(url, json={"delta": delta}, headers={"X-User-Name": username})
+        if result.status_code != client.OK:
+            return None
+
+        json_result = result.json()
+        return json_result
+    
+    def _update_user_rating(self, reservation_model: str, condition: str) -> Optional[dict]:
+        if reservation_model.status == "EXPIRED" and condition == "BAD":
+            return self._change_user_rating(reservation_model.username, -20)
+        elif reservation_model.status == "EXPIRED" or condition == "BAD":
+            return self._change_user_rating(reservation_model.username, -10)
+        else:
+            return self._change_user_rating(reservation_model.username, 1)

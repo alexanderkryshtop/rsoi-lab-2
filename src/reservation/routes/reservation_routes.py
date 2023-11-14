@@ -20,12 +20,16 @@ def take_book_in_library():
 
     return result, 200, {"Content-Type": "application/json"}
 
-@reservation_app.route("/<reservation_uid>/return")
-def get_books_in_library(library_uid: str):
-    page = request.args.get("page")
-    size = request.args.get("size")
-    show_all = request.args.get("showAll")
+@reservation_app.route("/<reservation_uid>/return", methods=["POST"])
+def return_book_to_library(reservation_uid: str):
+    username = request.headers.get("X-User-Name")
+    json_body = request.get_json()
 
-    books = reservation_service.get_books_in_library(library_uid=library_uid)
+    condition = json_body["condition"]
+    date = json_body["date"]
 
-    return f"{books}", 200
+    returned = reservation_service.return_book_to_library(reservation_uid, condition, date)
+    if not returned:
+        return {"message": "not found"}, 404, {"Content-Type": "application/json"}
+
+    return "", 204, {"Content-Type": "application/json"}

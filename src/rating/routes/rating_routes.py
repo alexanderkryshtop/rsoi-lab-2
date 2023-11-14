@@ -21,7 +21,9 @@ def get_rating():
 @rating_app.route("/change", methods=["POST"])
 def change_rating():
     username = request.headers.get("X-User-Name")
-    delta = request.json["delta"]
+
+    json_body = request.get_json()
+    delta = json_body["delta"]
 
     user_stars_count = rating_service.change_star_count(username, delta)
     response = {
