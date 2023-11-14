@@ -6,11 +6,13 @@ app = Flask(__name__)
 
 from routes.library_routes import library_app
 from routes.rating_routes import rating_app
+from routes.reservation_routes import reservation_app
 
 app.json.ensure_ascii = False
 
 app.register_blueprint(library_app)
 app.register_blueprint(rating_app)
+app.register_blueprint(reservation_app)
 
 def config_load():
     config_yaml = yaml.safe_load(open("config.yaml"))

@@ -12,12 +12,15 @@ from repository import ReservationModel
 
 class ReservationService:
     
-    def take_book_in_library(self, username: str, book_uid: str, library_uid: str, till_date: str) -> dict:
+    def take_book_in_library(self, username: str, book_uid: str, library_uid: str, till_date: str) -> Optional[dict]:
         rented_books_count = ReservationModel.query.filter(ReservationModel.username == username, ReservationModel.status == "RENTED").count()
         user_rating = self._get_user_rating(username)
+        if not user_rating:
+            return None
+
         star_count = user_rating["stars"]
         if star_count <= rented_books_count:
-            return
+            return None
         
         new_availability = self._decrease_available_count(book_uid, library_uid)
 
