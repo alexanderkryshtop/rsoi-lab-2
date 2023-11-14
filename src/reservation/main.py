@@ -11,8 +11,10 @@ from repository.models import db
 db.init_app(app)
 
 from routes.reservation_routes import reservation_app
+from routes.healthcheck import healthcheck_app
 
 app.register_blueprint(reservation_app)
+app.register_blueprint(healthcheck_app)
 
 def config_load():
     config_yaml = yaml.safe_load(open("config.yaml"))
