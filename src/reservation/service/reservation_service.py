@@ -19,6 +19,9 @@ class ReservationService:
             return None
 
         star_count = user_rating["stars"]
+        if not star_count:
+            return None
+
         if star_count <= rented_books_count:
             return None
         
