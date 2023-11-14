@@ -1,0 +1,6 @@
+server:
+  port: 8070
+
+gateway:
+  hostname: gateway_service
+  port: 8080
