@@ -27,8 +27,8 @@ def get_libraries():
         })
     
     response = {
-        "page": page,
-        "pageSize": size,
+        "page": int(page),
+        "pageSize": int(size),
         "totalElements": len(items),
         "items": items,
     }
@@ -67,8 +67,8 @@ def get_books_in_library(library_uid: str):
         })
     
     response = {
-        "page": page,
-        "pageSize": size,
+        "page": int(page),
+        "pageSize": int(size),
         "totalElements": len(items),
         "items": items
     }
