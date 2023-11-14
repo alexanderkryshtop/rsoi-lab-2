@@ -54,7 +54,6 @@ services:
       - reservation_service
       - rating_service
       - library_service
-
     ports:
       - "8080:8080"
 

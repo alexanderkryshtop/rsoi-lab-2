@@ -23,4 +23,4 @@ def config_load():
 
 if __name__ == '__main__':
     config_load()
-    app.run(host='localhost', port=app.config.get("port"))
+    app.run(host='0.0.0.0', port=app.config.get("port"))
