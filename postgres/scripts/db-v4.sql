@@ -62,3 +62,5 @@ CREATE TABLE rating
     stars    INT         NOT NULL
         CHECK (stars BETWEEN 0 AND 100)
 );
+
+INSERT INTO rating(id, username, stars) VALUES (1, 'username_example', 75);
