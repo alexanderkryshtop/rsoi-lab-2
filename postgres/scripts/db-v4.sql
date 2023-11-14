@@ -63,4 +63,4 @@ CREATE TABLE rating
         CHECK (stars BETWEEN 0 AND 100)
 );
 
-INSERT INTO rating(id, username, stars) VALUES (1, 'username_example', 75);
+INSERT INTO rating(id, username, stars) VALUES (1, '', 75);

@@ -22,7 +22,7 @@ services:
 
   reservation_service:
     build: src/reservation
-    container_name: reservation
+    container_name: reservation_service
     depends_on:
       postgres:
         condition: service_healthy
