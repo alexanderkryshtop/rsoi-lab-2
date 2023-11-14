@@ -16,9 +16,9 @@ def take_book_in_library():
     library_uid = json_body["libraryUid"]
     till_date = json_body["tillDate"]
 
-    libs = reservation_service.take_book_in_library(username, book_uid, library_uid, till_date)
+    result = reservation_service.take_book_in_library(username, book_uid, library_uid, till_date)
 
-    return f"{libs}", 200
+    return result, 200, {"Content-Type": "application/json"}
 
 @reservation_app.route("/<reservation_uid>/return")
 def get_books_in_library(library_uid: str):

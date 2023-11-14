@@ -12,9 +12,10 @@ from repository import ReservationModel
 
 class ReservationService:
     
-    def take_book_in_library(self, username: str, book_uid: str, library_uid: str, till_date: str):
+    def take_book_in_library(self, username: str, book_uid: str, library_uid: str, till_date: str) -> dict:
         rented_books_count = ReservationModel.query.filter(ReservationModel.username == username, ReservationModel.status == "RENTED").count()
-        star_count = self._get_user_stars(username)
+        user_rating = self._get_user_rating(username)
+        star_count = user_rating["stars"]
         if star_count <= rented_books_count:
             return
         
@@ -34,15 +35,25 @@ class ReservationService:
         ReservationModel.query.session.add(reservation_model)
         ReservationModel.query.session.commit()
 
-        pass
+        book = self._get_book(book_uid)
+        library = self._get_library(library_uid)
 
-    def _get_user_stars(self, username: str) -> int:
+        return {
+            "reservationUid": reservation.reservation_uid,
+            "status": reservation.status,
+            "startDate": reservation.start_date,
+            "tillDate": till_date,
+            "book": book,
+            "library": library,
+            "rating": user_rating,
+        }
+
+    def _get_user_rating(self, username: str) -> dict:
         gateway_url_prefix = current_app.config["gateway"]
         url = f"{gateway_url_prefix}/api/v1/rating"
         result = requests.get(url, headers={"X-User-Name": username})
-        json_result = json.loads(result.text)
-        star_count = json_result["stars"]
-        return star_count
+        json_result = result.json()
+        return json_result
 
     def _decrease_available_count(self, book_uid: str, library_uid: str) -> Optional[int]:
         gateway_url_prefix = current_app.config["gateway"]
@@ -61,3 +72,25 @@ class ReservationService:
         json_result = json.loads(result.text)
         availability = json_result["availability"]
         return availability
+    
+    def _get_book(self, book_uid: str) -> Optional[dict]:
+        gateway_url_prefix = current_app.config["gateway"]
+        url = f"{gateway_url_prefix}/api/v1/libraries/book/{book_uid}"
+        
+        result = requests.get(url)
+        if result.status_code != client.OK:
+            return None
+
+        json_result = result.json()
+        return json_result
+    
+    def _get_library(self, library_uid: str) -> Optional[dict]:
+        gateway_url_prefix = current_app.config["gateway"]
+        url = f"{gateway_url_prefix}/api/v1/libraries/library/{library_uid}"
+        
+        result = requests.get(url)
+        if result.status_code != client.OK:
+            return None
+
+        json_result = result.json()
+        return json_result
