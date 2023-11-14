@@ -1,4 +1,5 @@
 import requests
+import json
 from uuid import UUID
 from flask import Blueprint, request, current_app
 
@@ -37,3 +38,32 @@ def get_books_in_library(library_uid: str):
     result = requests.get(url)
 
     return result.text, result.status_code
+
+@library_app.route("/change_availability", methods=["POST"])
+def change_available_count_by_delta():
+    json_request = json.loads(request.get_json())
+    
+    prefix = current_app.config['library']
+
+    url = f"{prefix}/libraries/change_availability"
+    result = requests.post(url, json=json_request)
+
+    return result.text, result.status_code
+
+@library_app.route("/book/<book_uid>")
+def get_book(book_uid: str):
+    prefix = current_app.config['library']
+
+    url = f"{prefix}/libraries/book/{book_uid}"
+    result = requests.get(url)
+
+    return result.text, result.status_code, {"Content-Type": "application/json"}
+
+@library_app.route("/library/<library_uid>")
+def get_library(library_uid: str):
+    prefix = current_app.config['library']
+
+    url = f"{prefix}/libraries/library/{library_uid}"
+    result = requests.get(url)
+
+    return result.text, result.status_code, {"Content-Type": "application/json"}

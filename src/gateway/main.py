@@ -7,6 +7,8 @@ app = Flask(__name__)
 from routes.library_routes import library_app
 from routes.rating_routes import rating_app
 
+app.json.ensure_ascii = False
+
 app.register_blueprint(library_app)
 app.register_blueprint(rating_app)
 
