@@ -1,10 +1,10 @@
 from dataclasses import dataclass
+from uuid import UUID
 
 
-@dataclass(frozen=True)
-class Library:
-    id: int
-    library_uid: str
+@dataclass
+class LibraryAPI:
+    library_uid: UUID
     name: str
     city: str
     address: str

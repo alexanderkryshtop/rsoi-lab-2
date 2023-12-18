@@ -1,0 +1,9 @@
+server:
+  port: 8060
+  host: localhost
+postgres:
+  host: localhost
+  port: 5432
+  database: libraries
+  username: postgres
+  password: postgres
