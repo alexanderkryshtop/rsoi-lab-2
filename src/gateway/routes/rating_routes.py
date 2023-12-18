@@ -1,8 +1,8 @@
 import requests
-from uuid import UUID
 from flask import Blueprint, request, current_app
 
 rating_app = Blueprint("rating", __name__, url_prefix="/api/v1/rating")
+
 
 @rating_app.route("/")
 def get_rating():
@@ -15,6 +15,7 @@ def get_rating():
     result_content_type = result.headers.get("Content-Type")
 
     return result.text, result.status_code, {"Content-Type": result_content_type}
+
 
 @rating_app.route("/change", methods=["POST"])
 def change_rating():

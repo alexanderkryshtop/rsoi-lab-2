@@ -1,4 +1,3 @@
-from uuid import UUID
 from flask import Blueprint, request
 
 from service.reservation_service import ReservationService
@@ -6,6 +5,7 @@ from service.reservation_service import ReservationService
 reservation_app = Blueprint("reservation", __name__, url_prefix="/reservations")
 
 reservation_service = ReservationService()
+
 
 @reservation_app.route("/", methods=["POST"])
 def take_book_in_library():
@@ -20,6 +20,7 @@ def take_book_in_library():
 
     return result, 200, {"Content-Type": "application/json"}
 
+
 @reservation_app.route("/<reservation_uid>/return", methods=["POST"])
 def return_book_to_library(reservation_uid: str):
     username = request.headers.get("X-User-Name")
@@ -33,6 +34,7 @@ def return_book_to_library(reservation_uid: str):
         return {"message": "not found"}, 404, {"Content-Type": "application/json"}
 
     return "", 204, {"Content-Type": "application/json"}
+
 
 @reservation_app.route("/", methods=["GET"])
 def get_all_reservations():

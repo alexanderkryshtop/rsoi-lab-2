@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class Library:
     id: int

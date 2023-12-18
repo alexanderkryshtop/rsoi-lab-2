@@ -1,13 +1,13 @@
-import requests
 import json
-from uuid import UUID
-from flask import Blueprint, request, current_app
 
+import requests
+from flask import Blueprint, request, current_app
 from service.library_service import LibraryService
 
 library_app = Blueprint("library", __name__, url_prefix="/api/v1/libraries")
 
 library_service = LibraryService()
+
 
 @library_app.route("/")
 def get_libraries():
@@ -25,6 +25,7 @@ def get_libraries():
 
     return result.text, result.status_code, {"Content-Type": "application/json"}
 
+
 @library_app.route("/<library_uid>/books")
 def get_books_in_library(library_uid: str):
     page = request.args.get("page")
@@ -39,16 +40,18 @@ def get_books_in_library(library_uid: str):
 
     return result.text, result.status_code, {"Content-Type": "application/json"}
 
+
 @library_app.route("/change_availability", methods=["POST"])
 def change_available_count_by_delta():
     json_request = json.loads(request.get_json())
-    
+
     prefix = current_app.config['library']
 
     url = f"{prefix}/libraries/change_availability"
     result = requests.post(url, json=json_request)
 
     return result.text, result.status_code, {"Content-Type": "application/json"}
+
 
 @library_app.route("/book/<book_uid>")
 def get_book(book_uid: str):
@@ -58,6 +61,7 @@ def get_book(book_uid: str):
     result = requests.get(url)
 
     return result.text, result.status_code, {"Content-Type": "application/json"}
+
 
 @library_app.route("/library/<library_uid>")
 def get_library(library_uid: str):

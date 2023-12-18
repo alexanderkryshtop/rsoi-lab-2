@@ -16,6 +16,7 @@ app.register_blueprint(rating_app)
 app.register_blueprint(reservation_app)
 app.register_blueprint(gateway_app)
 
+
 def config_load():
     config_yaml = yaml.safe_load(open("config.yaml"))
     app.config["port"] = config_yaml["server"]["port"]

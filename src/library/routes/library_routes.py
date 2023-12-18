@@ -1,13 +1,11 @@
-import json
-from uuid import UUID
 from flask import Blueprint, request
 
 from service.library_service import LibraryService
-from dataclasses import asdict
 
 library_app = Blueprint("library", __name__, url_prefix="/libraries")
 
 library_service = LibraryService()
+
 
 @library_app.route("/")
 def get_libraries():
@@ -25,7 +23,7 @@ def get_libraries():
             "address": library.address,
             "city": library.city,
         })
-    
+
     response = {
         "page": int(page),
         "pageSize": int(size),
@@ -34,6 +32,7 @@ def get_libraries():
     }
 
     return response, 200, {"Content-Type": "application/json"}
+
 
 @library_app.route("/library/<library_uid>")
 def get_library(library_uid: str):
@@ -47,6 +46,7 @@ def get_library(library_uid: str):
         "city": library.city,
     }
     return response, 200, {"Content-Type": "application/json"}
+
 
 @library_app.route("/<library_uid>/books")
 def get_books_in_library(library_uid: str):
@@ -65,7 +65,7 @@ def get_books_in_library(library_uid: str):
             "condition": book.condition,
             "availableCount": books[book]
         })
-    
+
     response = {
         "page": int(page),
         "pageSize": int(size),
@@ -74,6 +74,7 @@ def get_books_in_library(library_uid: str):
     }
 
     return response, 200, {"Content-Type": "application/json"}
+
 
 @library_app.route("/book/<book_uid>")
 def get_book(book_uid: str):
@@ -87,6 +88,7 @@ def get_book(book_uid: str):
         "genre": book.genre,
     }
     return response, 200, {"Content-Type": "application/json"}
+
 
 @library_app.route("/change_availability", methods=["POST"])
 def change_available_count_by_delta():

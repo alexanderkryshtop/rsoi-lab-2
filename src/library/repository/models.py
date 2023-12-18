@@ -48,7 +48,7 @@ class BookModel(db.Model):
             genre=self.genre,
             condition=self.condition,
         )
-    
+
     def __repr__(self) -> str:
         return f"<id='{self.id}', uid='{self.book_uid}', name='{self.name}', author='{self.author}', genre='{self.genre}', condition='{self.condition}'>"
 

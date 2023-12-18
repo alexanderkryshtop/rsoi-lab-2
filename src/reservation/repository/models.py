@@ -1,7 +1,7 @@
-from typing_extensions import Self
 from typing import Optional
+
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import DateTime, Enum
+from typing_extensions import Self
 
 db = SQLAlchemy()
 
@@ -51,4 +51,3 @@ class ReservationModel(db.Model):
         return f"""<id='{self.id}', reservation_uid='{self.reservation_uid}', username='{self.username}', 
                 book_uid='{self.book_uid}', library_uid='{self.library_uid}', status='{self.status}', 
                 start_date='{self.start_date}', till_date='{self.till_date}'>"""
-

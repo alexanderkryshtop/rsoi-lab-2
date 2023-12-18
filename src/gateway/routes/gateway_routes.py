@@ -1,6 +1,7 @@
-from flask import Blueprint, request, current_app
+from flask import Blueprint
 
 gateway_app = Blueprint("gateway", __name__, url_prefix="/")
+
 
 @gateway_app.route("/manage/health")
 def get_libraries():

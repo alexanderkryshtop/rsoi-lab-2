@@ -1,9 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey
 
 db = SQLAlchemy()
 
-from entity import Rating
 
 class RatingModel(db.Model):
     __tablename__ = 'rating'
