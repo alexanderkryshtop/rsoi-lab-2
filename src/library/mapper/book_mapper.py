@@ -21,4 +21,5 @@ def entity_to_api(book: Book) -> BookAPI:
         author=book.author,
         name=book.name,
         genre=book.genre,
+        condition=book.condition,
     )

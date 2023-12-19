@@ -13,11 +13,11 @@ class RatingService:
             RatingModel.query.session.commit()
         return ratingModel.stars
 
-    def change_star_count(self, username: str, delta: int) -> Optional[int]:
+    def change_star_count(self, username: str, new_count: int) -> Optional[int]:
         ratingModel: RatingModel = RatingModel.query.filter(RatingModel.username == username).one_or_none()
         if not ratingModel:
             return None
-        new_rating = ratingModel.stars + delta
+        new_rating = new_count
         if new_rating >= 100:
             new_rating = 100
         if new_rating <= 1:

@@ -24,9 +24,9 @@ def change_rating():
     username = request.headers.get("X-User-Name")
 
     json_body = request.get_json()
-    delta = json_body["delta"]
+    count = json_body["count"]
 
-    user_stars_count = rating_service.change_star_count(username, delta)
+    user_stars_count = rating_service.change_star_count(username, count)
     response = {
         "stars": user_stars_count
     }

@@ -1,4 +1,5 @@
-from typing import Tuple, Any
+from datetime import date
+from typing import Tuple, Any, Optional
 
 import requests
 from flask import current_app
@@ -27,6 +28,14 @@ class ReservationService:
         }
         url = f"{current_app.config['reservation']}/reservations"
         result = requests.post(url, json=json_body, headers={"X-User-Name": username})
+
+        json_data = result.json()
+        return json_data, result.status_code
+
+    @staticmethod
+    def _get_reservation(reservation_uid: str) -> tuple[dict, int]:
+        url = f"{current_app.config['reservation']}/reservations/{reservation_uid}"
+        result = requests.get(url)
 
         json_data = result.json()
         return json_data, result.status_code
@@ -63,8 +72,29 @@ class ReservationService:
 
         return result, 200
 
-
     @staticmethod
-    def return_reservation(reservation_uid: str, username: str, condition: str, date: str) -> Tuple[dict, int]:
+    def return_reservation(
+        reservation_uid: str,
+        username: str,
+        condition: str,
+        current_date: str
+    ) -> Tuple[Optional[dict], int]:
+        reservation, status_code = ReservationService._get_reservation(reservation_uid)
+        book_uid = reservation["bookUid"]
+        library_uid = reservation["libraryUid"]
+        book, status_code = LibraryService.get_book(book_uid)
 
-        pass
+        decrease = 0
+        if book["condition"] != condition:
+            decrease += 10
+
+        required_date = date.fromisoformat(reservation["endDate"])
+        returning_date = date.fromisoformat(current_date)
+        if returning_date > required_date:
+            decrease += 10
+
+        rating, status_code = RatingService.get_user_rating(username)
+        updated_rating, status_code = RatingService.update_user_rating(username, rating - decrease)
+
+        LibraryService.return_book(book_uid, library_uid)
+        return None, 204

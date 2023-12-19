@@ -25,13 +25,11 @@ def return_book_to_library(reservation_uid: str):
     username = request.headers.get("X-User-Name")
     json_body = request.get_json()
 
-    prefix = current_app.config['reservation']
+    condition = json_body["condition"]
+    current_date = json_body["date"]
 
-    url = f"{prefix}/reservations/{reservation_uid}/return"
-    result = requests.post(url, json=json_body, headers={"X-User-Name": username})
-    result_content_type = result.headers.get("Content-Type")
-
-    return result.text, result.status_code, {"Content-Type": result_content_type}
+    response, status_code = ReservationService.return_reservation(reservation_uid, username, condition, current_date)
+    return jsonify(response), status_code
 
 
 @reservation_app.route("/", methods=["GET"])

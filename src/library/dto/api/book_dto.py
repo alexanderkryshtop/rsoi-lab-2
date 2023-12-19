@@ -28,6 +28,7 @@ class BookAPI:
     author: str
     name: str
     genre: str
+    condition: str
 
     def to_dict(self) -> dict:
         return {
@@ -35,6 +36,7 @@ class BookAPI:
             "author": self.author,
             "name": self.name,
             "genre": self.genre,
+            "condition": self.condition,
         }
 
 
