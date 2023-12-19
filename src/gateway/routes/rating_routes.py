@@ -1,20 +1,18 @@
 import requests
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request, current_app, jsonify
+
+from service.rating_service import RatingService
 
 rating_app = Blueprint("rating", __name__, url_prefix="/api/v1/rating")
+
+rating_service = RatingService()
 
 
 @rating_app.route("/")
 def get_rating():
     username = request.headers.get("X-User-Name")
-
-    prefix = current_app.config['rating']
-
-    url = f"{prefix}/rating"
-    result = requests.get(url, headers={"X-User-Name": username})
-    result_content_type = result.headers.get("Content-Type")
-
-    return result.text, result.status_code, {"Content-Type": result_content_type}
+    rating, status_code = rating_service.get_user_rating(username)
+    return jsonify(rating), status_code
 
 
 @rating_app.route("/change", methods=["POST"])

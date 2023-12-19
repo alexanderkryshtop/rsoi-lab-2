@@ -39,6 +39,20 @@ class BookRepository:
         book_model = self.db_session.query(BookModel).filter(BookModel.book_uid == book_uid).first()
         return self._to_entity(book_model) if book_model else None
 
+    def get_book_available_count(self, book_uid: UUID, library_uid: UUID) -> int:
+        available_count = self.db_session.query(
+            LibraryBooksModel.available_count
+        ).join(
+            BookModel, LibraryBooksModel.book_id == BookModel.id
+        ).join(
+            LibraryModel, LibraryBooksModel.library_id == LibraryModel.id
+        ).filter(
+            BookModel.book_uid == book_uid,
+            LibraryModel.library_uid == library_uid
+        ).scalar()
+
+        return available_count if available_count is not None else 0
+
     def find_books_by_library_uid(self, library_uid: UUID) -> list[BookWithCountRepository]:
         book_with_available_counts = self.db_session.query(
             BookModel,

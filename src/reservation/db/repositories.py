@@ -23,6 +23,12 @@ class ReservationRepository:
             ReservationModel.username == username).all()
         return [self._to_entity(reservation) for reservation in reservation_models]
 
+    def list_rented_by_username(self, username: str) -> list[Reservation]:
+        reservation_models = self.db_session.query(ReservationModel).filter(
+            ReservationModel.username == username, ReservationModel.status == ReservationModelStatus.RENTED
+        ).all()
+        return [self._to_entity(reservation) for reservation in reservation_models]
+
     def get_by_uid(self, reservation_uid: UUID) -> Optional[Reservation]:
         reservation_model = self.db_session.query(ReservationModel).filter(
             ReservationModel.reservation_uid == reservation_uid

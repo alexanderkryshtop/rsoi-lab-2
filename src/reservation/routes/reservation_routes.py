@@ -43,3 +43,12 @@ def get_all_reservations():
     username = request.headers.get("X-User-Name")
     reservations = reservation_service.get_all_reservations(username)
     return jsonify(reservations)
+
+
+@reservation_app.route("/rented")
+def get_rented_reservations_count():
+    username = request.headers.get("X-User-Name")
+    count = reservation_service.get_rented_reservations_count(username)
+    return jsonify({
+        "count": count
+    })

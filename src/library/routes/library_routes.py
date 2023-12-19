@@ -83,6 +83,15 @@ def get_book(book_uid: UUID):
     return jsonify(book.to_dict())
 
 
+@library_app.route("/book/count", methods=["POST"])
+def get_book_available_count():
+    json_data = request.get_json()
+    book_uid = json_data["bookUid"]
+    library_uid = json_data["libraryUid"]
+    available_count = library_service.get_book_available_count(book_uid, library_uid)
+    return jsonify({"count": available_count})
+
+
 @library_app.route("/<library_uid>")
 def get_library(library_uid: UUID):
     library = library_service.get_library(library_uid)

@@ -3,7 +3,8 @@ from flask import Flask
 
 from routes.gateway_routes import gateway_app
 from routes.library_routes import library_app
-
+from routes.rating_routes import rating_app
+from routes.reservation_routes import reservation_app
 
 def load_config(app: Flask, config_path: str):
     with open(config_path, "r") as config_file:
@@ -29,6 +30,8 @@ def create_app(config_filename):
 
     app.register_blueprint(gateway_app)
     app.register_blueprint(library_app)
+    app.register_blueprint(rating_app)
+    app.register_blueprint(reservation_app)
 
     return app
 
