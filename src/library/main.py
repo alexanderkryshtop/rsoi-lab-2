@@ -1,3 +1,5 @@
+import os
+
 import yaml
 from flask import Flask
 
@@ -32,5 +34,9 @@ def create_app(config_filename):
 
 
 if __name__ == '__main__':
+    if os.getenv("local-dev"):
+        config_file = "config_local.yaml"
+    else:
+        config_file = "config.yaml"
     app = create_app("config_local.yaml")
     app.run(host=app.config.get("host"), port=app.config.get("port"))

@@ -1,3 +1,5 @@
+import os
+
 import yaml
 from flask import Flask
 
@@ -5,6 +7,7 @@ from routes.gateway_routes import gateway_app
 from routes.library_routes import library_app
 from routes.rating_routes import rating_app
 from routes.reservation_routes import reservation_app
+
 
 def load_config(app: Flask, config_path: str):
     with open(config_path, "r") as config_file:
@@ -37,5 +40,9 @@ def create_app(config_filename):
 
 
 if __name__ == '__main__':
+    if os.getenv("local-dev"):
+        config_file = "config_local.yaml"
+    else:
+        config_file = "config.yaml"
     app = create_app("config_local.yaml")
     app.run(host=app.config.get("host"), port=app.config.get("port"))
