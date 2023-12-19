@@ -15,7 +15,7 @@ def take_book_in_library():
     library_uid = json_body["libraryUid"]
     till_date = json_body["tillDate"]
 
-    response, status_code = ReservationService.reservation_process(username, book_uid, library_uid, till_date)
+    response, status_code = ReservationService.reservation_process_create(username, book_uid, library_uid, till_date)
 
     return jsonify(response), status_code
 
@@ -28,7 +28,7 @@ def return_book_to_library(reservation_uid: str):
     condition = json_body["condition"]
     current_date = json_body["date"]
 
-    response, status_code = ReservationService.return_reservation(reservation_uid, username, condition, current_date)
+    response, status_code = ReservationService.reservation_process_return(reservation_uid, username, condition, current_date)
     return jsonify(response), status_code
 
 

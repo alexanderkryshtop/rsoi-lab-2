@@ -24,7 +24,7 @@ def create_reservation():
 
 
 @reservation_app.route("/<reservation_uid>/return", methods=["POST"])
-def return_book_to_library(reservation_uid: UUID):
+def return_reservation(reservation_uid: UUID):
     json_body = request.get_json()
     date = json_body["date"]
 

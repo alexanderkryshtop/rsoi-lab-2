@@ -3,7 +3,6 @@ from typing import Tuple, Any, Optional
 
 import requests
 from flask import current_app
-
 from service.library_service import LibraryService
 from service.rating_service import RatingService
 
@@ -33,6 +32,15 @@ class ReservationService:
         return json_data, result.status_code
 
     @staticmethod
+    def _update_reservation(reservation_uid: str, current_date: str) -> int:
+        json_body = {
+            "date": current_date
+        }
+        url = f"{current_app.config['reservation']}/reservations/{reservation_uid}/return"
+        result = requests.post(url, json=json_body)
+        return result.status_code
+
+    @staticmethod
     def _get_reservation(reservation_uid: str) -> tuple[dict, int]:
         url = f"{current_app.config['reservation']}/reservations/{reservation_uid}"
         result = requests.get(url)
@@ -41,7 +49,7 @@ class ReservationService:
         return json_data, result.status_code
 
     @staticmethod
-    def reservation_process(username: str, book_uid: str, library_uid: str, till_date: str) -> Tuple[Any, int]:
+    def reservation_process_create(username: str, book_uid: str, library_uid: str, till_date: str) -> Tuple[Any, int]:
         rating, status_code = RatingService.get_user_rating(username)
         if status_code != 200:
             return {"message": "rating error"}, status_code
@@ -73,11 +81,11 @@ class ReservationService:
         return result, 200
 
     @staticmethod
-    def return_reservation(
-        reservation_uid: str,
-        username: str,
-        condition: str,
-        current_date: str
+    def reservation_process_return(
+            reservation_uid: str,
+            username: str,
+            condition: str,
+            current_date: str
     ) -> Tuple[Optional[dict], int]:
         reservation, status_code = ReservationService._get_reservation(reservation_uid)
         book_uid = reservation["bookUid"]
@@ -96,5 +104,6 @@ class ReservationService:
         rating, status_code = RatingService.get_user_rating(username)
         updated_rating, status_code = RatingService.update_user_rating(username, rating - decrease)
 
+        ReservationService._update_reservation(reservation_uid, current_date)
         LibraryService.return_book(book_uid, library_uid)
         return None, 204
