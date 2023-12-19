@@ -12,7 +12,7 @@ rating_service = RatingService()
 def get_rating():
     username = request.headers.get("X-User-Name")
     rating, status_code = rating_service.get_user_rating(username)
-    return jsonify(rating), status_code
+    return jsonify({"stars": rating}), status_code
 
 
 @rating_app.route("/change", methods=["POST"])
