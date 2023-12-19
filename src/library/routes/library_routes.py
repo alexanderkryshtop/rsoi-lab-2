@@ -33,7 +33,7 @@ def get_libraries():
     })
 
 
-@library_app.route("/<library_uid>/book")
+@library_app.route("/<library_uid>/books")
 def get_books_in_library(library_uid: UUID):
     page = request.args.get("page", default=1, type=int)
     size = request.args.get("size", default=1, type=int)
