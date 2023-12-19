@@ -1,34 +1,38 @@
 import yaml
-
 from flask import Flask
 
-app = Flask(__name__)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql+psycopg2://postgres:postgres@localhost:5432/reservations'
-app.json.sort_keys = False
-
 from db.models import db
-
-db.init_app(app)
-
-from routes.reservation_routes import reservation_app
 from routes.healthcheck import healthcheck_app
-
-app.register_blueprint(reservation_app)
-app.register_blueprint(healthcheck_app)
+from routes.reservation_routes import reservation_app
 
 
-def config_load():
-    config_yaml = yaml.safe_load(open("config.yaml"))
-    app.config["port"] = config_yaml["server"]["port"]
+def load_config(app: Flask, config_path: str):
+    with open(config_path, "r") as config_file:
+        config_yaml = yaml.safe_load(config_file)
+    app.config.update(
+        port=config_yaml["server"]["port"],
+        host=config_yaml["server"].get("host", "0.0.0.0"),
+        SQLALCHEMY_DATABASE_URI=(
+            f"postgresql+psycopg2://{config_yaml['postgres']['username']}:{config_yaml['postgres']['password']}"
+            f"@{config_yaml['postgres']['host']}:{config_yaml['postgres']['port']}/{config_yaml['postgres']['database']}"
+        )
+    )
 
-    gateway_port = config_yaml["gateway"]["port"]
-    gateway_hostname = config_yaml["gateway"]["hostname"]
-    gateway_url = f"http://{gateway_hostname}:{gateway_port}"
 
-    app.config["gateway"] = gateway_url
+def create_app(config_filename):
+    app = Flask(__name__)
+
+    load_config(app, config_filename)
+    app.json.sort_keys = False
+
+    db.init_app(app)
+
+    app.register_blueprint(reservation_app)
+    app.register_blueprint(healthcheck_app)
+
+    return app
 
 
 if __name__ == '__main__':
-    config_load()
-    app.run(host='0.0.0.0', port=app.config.get("port"))
+    app = create_app("config_local.yaml")
+    app.run(host=app.config.get("host"), port=app.config.get("port"))
