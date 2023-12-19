@@ -1,5 +1,8 @@
-from flask import Blueprint, request, jsonify
+from uuid import UUID
 
+from flask import Blueprint, request, jsonify, Response
+
+from exceptions import exceptions
 from service.reservation_service import ReservationService
 
 reservation_app = Blueprint("reservation", __name__, url_prefix="/reservations")
@@ -21,22 +24,22 @@ def create_reservation():
 
 
 @reservation_app.route("/<reservation_uid>/return", methods=["POST"])
-def return_book_to_library(reservation_uid: str):
-    username = request.headers.get("X-User-Name")
+def return_book_to_library(reservation_uid: UUID):
     json_body = request.get_json()
-
-    condition = json_body["condition"]
     date = json_body["date"]
 
-    returned = reservation_service.return_book_to_library(reservation_uid, condition, date)
-    if not returned:
-        return {"message": "not found"}, 404, {"Content-Type": "application/json"}
+    try:
+        reservation_service.close_reservation(reservation_uid, date)
+    except exceptions.ReservationNotFound:
+        return jsonify({
+            "message": "not found"
+        }), 404
 
-    return "", 204, {"Content-Type": "application/json"}
+    return Response(status=204)
 
 
 @reservation_app.route("/", methods=["GET"])
 def get_all_reservations():
     username = request.headers.get("X-User-Name")
     reservations = reservation_service.get_all_reservations(username)
-    return reservations, 200, {"Content-Type": "application/json"}
+    return jsonify(reservations)
