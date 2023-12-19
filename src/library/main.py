@@ -12,11 +12,9 @@ from db.models import db
 db.init_app(app)
 
 from routes.library_routes import library_app
-from routes.book_routes import book_app
 from routes.healthcheck import healthcheck_app
 
 app.register_blueprint(library_app)
-app.register_blueprint(book_app)
 app.register_blueprint(healthcheck_app)
 
 

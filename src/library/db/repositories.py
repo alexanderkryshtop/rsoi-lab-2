@@ -1,17 +1,19 @@
+from typing import Optional
 from uuid import UUID
 
 from db.models import LibraryModel, BookModel, LibraryBooksModel
 from domain.entities import Library, Book
 from dto.repository.book_dto import BookWithCountRepository
+from exceptions import exceptions
 
 
 class LibraryRepository:
     def __init__(self, db_session):
         self.db_session = db_session
 
-    def get_library_by_id(self, id) -> Library:
-        library_model = self.db_session.query(LibraryModel).get(id)
-        return library_model.to_entity() if library_model else None
+    def get_library_by_uid(self, library_uid: UUID) -> Optional[Library]:
+        library_model = self.db_session.query(LibraryModel).filter(LibraryModel.library_uid == library_uid).first()
+        return self._to_entity(library_model) if library_model else None
 
     def get_libraries_by_city(self, city: str) -> list[Library]:
         library_models = LibraryModel.query.filter_by(city=city).all()
@@ -33,9 +35,9 @@ class BookRepository:
     def __init__(self, db_session):
         self.db_session = db_session
 
-    def get_book_by_id(self, id) -> Book:
-        book_model = self.db_session.query(BookModel).get(id)
-        return book_model.to_entity() if book_model else None
+    def get_book_by_uid(self, book_uid: UUID) -> Optional[Book]:
+        book_model = self.db_session.query(BookModel).filter(BookModel.book_uid == book_uid).first()
+        return self._to_entity(book_model) if book_model else None
 
     def find_books_by_library_uid(self, library_uid: UUID) -> list[BookWithCountRepository]:
         book_with_available_counts = self.db_session.query(
@@ -59,6 +61,39 @@ class BookRepository:
             books_with_count.append(book_with_count)
 
         return books_with_count
+
+    def checkout_book(self, library_uid: UUID, book_uid: UUID):
+        library = self.db_session.query(LibraryModel).filter_by(library_uid=library_uid).first()
+        if not library:
+            raise exceptions.LibraryNotFound()
+
+        library_book = self.db_session.query(LibraryBooksModel).join(BookModel).filter(
+            LibraryBooksModel.library_id == library.id,
+            BookModel.book_uid == book_uid
+        ).first()
+        if not library_book:
+            raise exceptions.BookNotFoundInLibrary()
+
+        if library_book.available_count < 1:
+            raise exceptions.BookNotAvailable()
+
+        library_book.available_count -= 1
+        self.db_session.commit()
+
+    def return_book(self, library_uid: UUID, book_uid: UUID):
+        library = self.db_session.query(LibraryModel).filter_by(library_uid=library_uid).first()
+        if not library:
+            raise exceptions.LibraryNotFound()
+
+        library_book = self.db_session.query(LibraryBooksModel).join(BookModel).filter(
+            LibraryBooksModel.library_id == library.id,
+            BookModel.book_uid == book_uid
+        ).first()
+        if not library_book:
+            raise exceptions.BookNotFoundInLibrary()
+
+        library_book.available_count += 1
+        self.db_session.commit()
 
     @staticmethod
     def _to_entity(model: BookModel):

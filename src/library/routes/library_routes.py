@@ -1,10 +1,13 @@
 from uuid import UUID
 
 from flask import Blueprint
+from flask import Response
 from flask import abort
 from flask import jsonify
 from flask import request
 
+from dto.api.book_dto import BookCheckoutRequestAPI
+from exceptions import exceptions
 from service.library_service import LibraryService
 
 library_app = Blueprint("library", __name__, url_prefix="/libraries")
@@ -31,7 +34,7 @@ def get_libraries():
     })
 
 
-@library_app.route("/libraries/<library_uid>/book")
+@library_app.route("/<library_uid>/book")
 def get_books_in_library(library_uid: UUID):
     page = request.args.get("page", default=1, type=int)
     size = request.args.get("size", default=10, type=int)
@@ -47,39 +50,41 @@ def get_books_in_library(library_uid: UUID):
     })
 
 
-@library_app.route("/library/<library_uid>")
-def get_library(library_uid: str):
-    library = library_service.get_library(library_uid)
-    if not library:
-        return {}, 404
-    response = {
-        "libraryUid": library.library_uid,
-        "name": library.name,
-        "address": library.address,
-        "city": library.city,
-    }
-    return response, 200, {"Content-Type": "application/json"}
+@library_app.route("/book/checkout", methods=["POST"])
+def checkout_book():
+    json_data = request.get_json()
+    book_checkout_request = BookCheckoutRequestAPI(
+        book_uid=json_data["bookUid"],
+        library_uid=json_data["libraryUid"],
+    )
+    try:
+        library_service.checkout_book(book_checkout_request.book_uid, book_checkout_request.library_uid)
+    except (exceptions.BookNotAvailable, exceptions.LibraryNotFound, exceptions.BookNotFoundInLibrary):
+        abort(404)
+    return Response(status=200)
+
+
+@library_app.route("/book/return", methods=["POST"])
+def return_book():
+    json_data = request.get_json()
+    book_checkout_request = BookCheckoutRequestAPI(
+        book_uid=json_data["bookUid"],
+        library_uid=json_data["libraryUid"],
+    )
+    try:
+        library_service.return_book(book_checkout_request.book_uid, book_checkout_request.library_uid)
+    except (exceptions.BookNotAvailable, exceptions.LibraryNotFound, exceptions.BookNotFoundInLibrary):
+        abort(404)
+    return Response(status=200)
 
 
 @library_app.route("/book/<book_uid>")
-def get_book(book_uid: str):
+def get_book(book_uid: UUID):
     book = library_service.get_book(book_uid)
-    if not book:
-        return {}, 404
-    response = {
-        "bookUid": book.book_uid,
-        "name": book.name,
-        "author": book.author,
-        "genre": book.genre,
-    }
-    return response, 200, {"Content-Type": "application/json"}
+    return jsonify(book)
 
 
-@library_app.route("/change_availability", methods=["POST"])
-def change_available_count_by_delta():
-    json_request = request.get_json()
-    library_uid = json_request["libraryUid"]
-    book_uid = json_request["bookUid"]
-    delta = json_request["delta"]
-    book_availability = library_service.change_book_availability(library_uid, book_uid, delta)
-    return {"availability": book_availability}, 200
+@library_app.route("/<library_uid>")
+def get_library(library_uid: UUID):
+    library = library_service.get_library(library_uid)
+    return jsonify(library)

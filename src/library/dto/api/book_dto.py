@@ -10,3 +10,17 @@ class BookWithCountAPI:
     genre: str
     condition: str
     available_count: int
+
+
+@dataclass
+class BookAPI:
+    bookUid: UUID
+    author: str
+    name: str
+    genre: str
+
+
+@dataclass
+class BookCheckoutRequestAPI:
+    book_uid: UUID
+    library_uid: UUID
