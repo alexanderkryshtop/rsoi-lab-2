@@ -10,6 +10,14 @@ class ReservationAPI:
     start_date: date
     till_date: date
 
+    def to_dict(self) -> dict:
+        return {
+            "reservationUid": self.reservation_uid,
+            "status": self.status,
+            "startDate": self.start_date.strftime("%Y-%m-%d"),
+            "endDate": self.till_date.strftime("%Y-%m-%d"),
+        }
+
 
 @dataclass
 class BookCheckoutRequestAPI:

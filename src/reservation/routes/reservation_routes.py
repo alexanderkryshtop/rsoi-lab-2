@@ -17,7 +17,7 @@ def create_reservation():
     till_date = json_body["tillDate"]
 
     result = reservation_service.create_reservation(username, book_uid, library_uid, till_date)
-    return jsonify(result)
+    return jsonify(result.to_dict())
 
 
 @reservation_app.route("/<reservation_uid>/return", methods=["POST"])

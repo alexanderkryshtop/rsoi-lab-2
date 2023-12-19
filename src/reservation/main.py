@@ -5,6 +5,7 @@ from flask import Flask
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql+psycopg2://postgres:postgres@localhost:5432/reservations'
+app.json.sort_keys = False
 
 from db.models import db
 
