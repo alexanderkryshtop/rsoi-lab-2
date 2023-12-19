@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from service.reservation_service import ReservationService
 
@@ -8,7 +8,7 @@ reservation_service = ReservationService()
 
 
 @reservation_app.route("/", methods=["POST"])
-def take_book_in_library():
+def create_reservation():
     username = request.headers.get("X-User-Name")
     json_body = request.get_json()
 
@@ -16,9 +16,8 @@ def take_book_in_library():
     library_uid = json_body["libraryUid"]
     till_date = json_body["tillDate"]
 
-    result = reservation_service.take_book_in_library(username, book_uid, library_uid, till_date)
-
-    return result, 200, {"Content-Type": "application/json"}
+    result = reservation_service.create_reservation(username, book_uid, library_uid, till_date)
+    return jsonify(result)
 
 
 @reservation_app.route("/<reservation_uid>/return", methods=["POST"])
