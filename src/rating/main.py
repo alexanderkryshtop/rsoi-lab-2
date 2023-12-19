@@ -40,5 +40,5 @@ if __name__ == '__main__':
         config_file = "config_local.yaml"
     else:
         config_file = "config.yaml"
-    app = create_app("config_local.yaml")
+    app = create_app(config_file)
     app.run(host=app.config.get("host"), port=app.config.get("port"))
