@@ -54,3 +54,7 @@ class ReservationService:
     def get_rented_reservations_count(self, username: str) -> int:
         reservations = self._reservation_repository.list_rented_by_username(username)
         return len(reservations)
+
+    def get_reservation(self, reservation_uid) -> ReservationFullAPI:
+        reservation = self._reservation_repository.get_by_uid(reservation_uid)
+        return reservation_mapper.reservation_to_full_dto(reservation)

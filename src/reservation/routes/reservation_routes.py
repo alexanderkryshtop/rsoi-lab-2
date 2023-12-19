@@ -42,13 +42,17 @@ def return_book_to_library(reservation_uid: UUID):
 def get_all_reservations():
     username = request.headers.get("X-User-Name")
     reservations = reservation_service.get_all_reservations(username)
-    return jsonify(reservations)
+    return jsonify([reservation.to_dict() for reservation in reservations])
 
 
 @reservation_app.route("/rented")
 def get_rented_reservations_count():
     username = request.headers.get("X-User-Name")
     count = reservation_service.get_rented_reservations_count(username)
-    return jsonify({
-        "count": count
-    })
+    return jsonify({"count": count})
+
+
+@reservation_app.route("/<reservation_uid>")
+def get_reservation(reservation_uid: UUID):
+    reservation = reservation_service.get_reservation(reservation_uid)
+    return jsonify(reservation.to_dict())

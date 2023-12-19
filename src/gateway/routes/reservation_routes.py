@@ -15,9 +15,9 @@ def take_book_in_library():
     library_uid = json_body["libraryUid"]
     till_date = json_body["tillDate"]
 
-    resp = ReservationService.create_reservation(username, book_uid, library_uid, till_date)
+    response, status_code = ReservationService.reservation_process(username, book_uid, library_uid, till_date)
 
-    return jsonify(resp)
+    return jsonify(response), status_code
 
 
 @reservation_app.route("/<reservation_uid>/return", methods=["POST"])
