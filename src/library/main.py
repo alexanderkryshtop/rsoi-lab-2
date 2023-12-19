@@ -5,6 +5,7 @@ from flask import Flask
 
 from db.models import db
 from routes.library_routes import library_app
+from routes.healthcheck import healthcheck_app
 
 
 def load_config(app: Flask, config_path: str):
@@ -29,6 +30,7 @@ def create_app(config_filename):
     db.init_app(app)
 
     app.register_blueprint(library_app)
+    app.register_blueprint(healthcheck_app)
 
     return app
 
