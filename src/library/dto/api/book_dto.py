@@ -11,6 +11,16 @@ class BookWithCountAPI:
     condition: str
     available_count: int
 
+    def to_dict(self) -> dict:
+        return {
+            "bookUid": self.book_uid,
+            "name": self.name,
+            "author": self.author,
+            "genre": self.genre,
+            "condition": self.condition,
+            "availableCount": self.available_count,
+        }
+
 
 @dataclass
 class BookAPI:
@@ -18,6 +28,14 @@ class BookAPI:
     author: str
     name: str
     genre: str
+
+    def to_dict(self) -> dict:
+        return {
+            "bookUid": self.bookUid,
+            "author": self.author,
+            "name": self.name,
+            "genre": self.genre,
+        }
 
 
 @dataclass

@@ -8,3 +8,11 @@ class LibraryAPI:
     name: str
     city: str
     address: str
+
+    def to_dict(self) -> dict:
+        return {
+            "libraryUid": self.library_uid,
+            "name": self.name,
+            "city": self.city,
+            "address": self.address,
+        }

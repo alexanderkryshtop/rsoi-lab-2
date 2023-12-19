@@ -1,13 +1,12 @@
 from uuid import UUID
 
+from dto.api.book_dto import BookCheckoutRequestAPI
+from exceptions import exceptions
 from flask import Blueprint
 from flask import Response
 from flask import abort
 from flask import jsonify
 from flask import request
-
-from dto.api.book_dto import BookCheckoutRequestAPI
-from exceptions import exceptions
 from service.library_service import LibraryService
 
 library_app = Blueprint("library", __name__, url_prefix="/libraries")
@@ -18,7 +17,7 @@ library_service = LibraryService()
 @library_app.route("/")
 def get_libraries():
     page = request.args.get("page", default=1, type=int)
-    size = request.args.get("size", default=10, type=int)
+    size = request.args.get("size", default=1, type=int)
     city = request.args.get("city", type=str)
 
     if city is None:
@@ -30,14 +29,14 @@ def get_libraries():
         "page": page,
         "pageSize": size,
         "totalElements": len(libraries),
-        "items": libraries,
+        "items": [library.to_dict() for library in libraries],
     })
 
 
 @library_app.route("/<library_uid>/book")
 def get_books_in_library(library_uid: UUID):
     page = request.args.get("page", default=1, type=int)
-    size = request.args.get("size", default=10, type=int)
+    size = request.args.get("size", default=1, type=int)
     show_all = request.args.get("showAll", type=bool)
 
     books = library_service.get_books_in_library(library_uid=library_uid)
@@ -46,7 +45,7 @@ def get_books_in_library(library_uid: UUID):
         "page": page,
         "pageSize": size,
         "totalElements": len(books),
-        "items": books
+        "items": [book.to_dict() for book in books]
     })
 
 
@@ -81,10 +80,10 @@ def return_book():
 @library_app.route("/book/<book_uid>")
 def get_book(book_uid: UUID):
     book = library_service.get_book(book_uid)
-    return jsonify(book)
+    return jsonify(book.to_dict())
 
 
 @library_app.route("/<library_uid>")
 def get_library(library_uid: UUID):
     library = library_service.get_library(library_uid)
-    return jsonify(library)
+    return jsonify(library.to_dict())

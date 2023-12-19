@@ -1,13 +1,9 @@
 import json
 
 import requests
-from flask import Blueprint, request, current_app
-from service.library_service import LibraryService
+from flask import Blueprint, request, current_app, Response
 
 library_app = Blueprint("library", __name__, url_prefix="/api/v1/libraries")
-
-library_service = LibraryService()
-
 
 @library_app.route("/")
 def get_libraries():
@@ -15,7 +11,7 @@ def get_libraries():
     size = request.args.get("size")
     city = request.args.get("city")
     if not city:
-        return "", 400
+        return Response(status=400)
 
     decoded_query_string = request.query_string.decode()
     prefix = current_app.config['library']
