@@ -92,18 +92,49 @@ class ReservationService:
         library_uid = reservation["libraryUid"]
         book, status_code = LibraryService.get_book(book_uid)
 
-        decrease = 0
-        if book["condition"] != condition:
-            decrease += 10
-
         required_date = date.fromisoformat(reservation["endDate"])
         returning_date = date.fromisoformat(current_date)
+
+        decrease = 0
+        increase = 0
+        decreased = False
+        if book["condition"] != condition:
+            decrease += 10
+            decreased = True
         if returning_date > required_date:
             decrease += 10
+            decreased = True
+        if not decreased:
+            increase = 1
 
         rating, status_code = RatingService.get_user_rating(username)
-        updated_rating, status_code = RatingService.update_user_rating(username, rating - decrease)
+        updated_rating, status_code = RatingService.update_user_rating(username, rating - decrease + increase)
 
         ReservationService._update_reservation(reservation_uid, current_date)
         LibraryService.return_book(book_uid, library_uid)
         return None, 204
+
+    @staticmethod
+    def get_all_reservations(username: str) -> Tuple[Any, int]:
+        result = requests.get(
+            f"{current_app.config['reservation']}/reservations/",
+            headers={"X-User-Name": username}
+        )
+        reservations = result.json()
+        res = []
+
+        for reservation in reservations:
+            book_uid = reservation["bookUid"]
+            library_uid = reservation["libraryUid"]
+            book, status_code = LibraryService.get_book(book_uid)
+            library, status_code = LibraryService.get_library(library_uid)
+            res.append({
+                "reservationUid": reservation["reservationUid"],
+                "status": reservation["status"],
+                "startDate": reservation["startDate"],
+                "tillDate": reservation["endDate"],
+                "book": book,
+                "library": library
+            })
+
+        return res, result.status_code

@@ -36,9 +36,5 @@ def return_book_to_library(reservation_uid: str):
 def get_all_reservations():
     username = request.headers.get("X-User-Name")
 
-    prefix = current_app.config['reservation']
-    url = f"{prefix}/reservations/"
-    result = requests.get(url, headers={"X-User-Name": username})
-    result_content_type = result.headers.get("Content-Type")
-
-    return result.text, result.status_code, {"Content-Type": result_content_type}
+    response, status_code = ReservationService.get_all_reservations(username)
+    return jsonify(response), status_code
